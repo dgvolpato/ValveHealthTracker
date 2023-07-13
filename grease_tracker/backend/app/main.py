@@ -3,7 +3,7 @@ from tracemalloc import take_snapshot
 from fastapi import FastAPI
 from pydantic import BaseModel
 from datetime import datetime
-from backend.app.db import PressureReadings
+from backend.app.db import database, PressureReadings
 from fastapi.middleware.cors import CORSMiddleware
 from backend.app.MQTTHandler import MQTTHandler
 from backend.app.WorkerThread import WorkerThread
@@ -134,18 +134,18 @@ async def get_pressure():
 #     return today_intake
 
 
-# @app.get("/")
-# async def root():
-#     return {"message": "Hello World"}
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
 
 
-# @app.on_event("startup")
-# async def startup():
-#     if not database.is_connected:
-#         await database.connect()
+@app.on_event("startup")
+async def startup():
+    if not database.is_connected:
+        await database.connect()
 
 
-# @app.on_event("shutdown")
-# async def shutdown():
-#     if database.is_connected:
-#         await database.disconnect()
+@app.on_event("shutdown")
+async def shutdown():
+    if database.is_connected:
+        await database.disconnect()
