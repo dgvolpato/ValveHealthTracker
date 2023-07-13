@@ -29,3 +29,7 @@ bash scripts/docker-run.sh
 * minor test: `python .\grease_tracker\backend\app\main.py`
 
 * frontend url: `http://localhost:80/`
+
+# Test requests
+
+`curl -X GET http://localhost:8008/pressure`
