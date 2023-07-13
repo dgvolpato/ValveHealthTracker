@@ -6,6 +6,8 @@ Grease tracker frontend will generate a plot, and provide an indicator about whe
 
 During a greasing event, the valve cavity information will be used to monitor how much grease is used and a signal will be sent out to point out too much grease is being used in that valve.
 
+# MQTT installation
+https://mosquitto.org/download/
 
 # Running simulator (Windows):
 
@@ -18,4 +20,4 @@ During a greasing event, the valve cavity information will be used to monitor ho
 
 
 * run backend
-  `TODO`
+  `python .\grease_tracker\backend\app\main.py`
