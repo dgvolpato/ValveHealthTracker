@@ -1,0 +1,9 @@
+<div class="home-page">
+    <div class="valve-selector">
+        <app-valve-selector (selectedValveEvent)="setSelectedValve($event)"></app-valve-selector>
+    </div>
+    <div class="greasing-graph">
+        <app-pressure-graph [pressureData]="selectedValve"></app-pressure-graph>
+        <app-grease-graph [greaseData]="selectedValve"></app-grease-graph>
+    </div>
+</div>
