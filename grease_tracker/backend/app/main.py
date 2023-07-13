@@ -3,7 +3,7 @@ from tracemalloc import take_snapshot
 from fastapi import FastAPI
 from pydantic import BaseModel
 from datetime import datetime
-# from backend.app.db import database, PressureReadings
+from db import PressureReadings
 from fastapi.middleware.cors import CORSMiddleware
 from MQTTHandler import MQTTHandler
 from WorkerThread import WorkerThread
@@ -45,36 +45,6 @@ class Main():
 
         return 0
 
-    def HandleData(self, payload):
-        logging.debug("Data received")
-
-        if (self.privateAppWorker):
-            logging.debug("Sending to client")
-            self.privateAppWorker.HandleData(payload)
-
-        return 0
-
-    def run(self):
-        logging.debug("running thread AppWorker")
-        self.privateRun = True
-
-        self.mqtt_handler = MQTTHandler(self.broker_ip, 
-                                        self.broker_port, 
-                                        self.username, 
-                                        self.password, 
-                                        self.keep_alive, 
-                                        self.subTopic)
-        self.mqtt_handler.start()
-        
-        while(self.privateRun == True):
-            # if (self.stopped() == True):
-            #     logging.debug("Stopping thread AppWorker")
-            #     self.privateRun = False
-            # else:
-                time.sleep(10)
-                logging.debug("Main thread running")
-
-
 
 if __name__ == "__main__":
     main = Main()
@@ -101,17 +71,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# @app.get("/pressure")
-# async def get_pressure():
-#     today_string = "{:%m/%d/%Y}".format(datetime.now())
-#     HARDCODED_VALVE_ID = 1
+@app.get("/pressure")
+async def get_pressure():
+    today_string = "{:%m/%d/%Y}".format(datetime.now())
+    HARDCODED_VALVE_ID = 1
     
-#     try:
-#         valve_pressure_history = await PressureReadings.objects.filter(valve_id=HARDCODED_VALVE_ID).get()
-#     except:
-#         valve_pressure_history = None
+    try:
+        valve_pressure_history = await PressureReadings.objects.filter(valve_id=HARDCODED_VALVE_ID).get()
+    except:
+        valve_pressure_history = None
     
-#     return valve_pressure_history
+    return valve_pressure_history
 
 
 # @app.put("/pressure")

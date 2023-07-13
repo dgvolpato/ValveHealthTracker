@@ -20,4 +20,12 @@ https://mosquitto.org/download/
 
 
 * run backend
-  `python .\grease_tracker\backend\app\main.py`
+```
+cd grease_tracker
+bash scripts/docker-build.sh
+bash scripts/docker-run.sh
+```
+
+* minor test: `python .\grease_tracker\backend\app\main.py`
+
+* frontend url: `http://localhost:80/`
