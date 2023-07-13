@@ -1,0 +1,33 @@
+version: '3.3'
+
+services:
+  web:
+    build: ./backend
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn backend.app.main:app --host 0.0.0.0'
+    volumes:
+      - .:/app
+    ports:
+      - 8008:8000
+    environment:
+      - DATABASE_URL=postgresql://hackathon2023:hackathon2023@db:5432/hackathon2023
+    depends_on:
+      - db
+  db:
+    image: postgres:13-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_USER=hackathon2023
+      - POSTGRES_PASSWORD=hackathon2023
+      - POSTGRES_DB=hackathon2023
+  angular-ui:
+    image: ng-ui
+    build: ./frontend
+    ports:
+    - 80:80
+
+volumes:
+  postgres_data:
+  node_modules:
