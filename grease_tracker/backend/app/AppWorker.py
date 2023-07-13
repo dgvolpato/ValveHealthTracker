@@ -30,7 +30,7 @@ class AppWorker(WorkerThread):
     def Configure(self):
         logging.debug("Config setup")
         
-        self.broker_ip = "192.168.0.1"
+        self.broker_ip = "localhost"
         self.broker_port = 1883
         self.username = "admin"
         self.password = "admin123"

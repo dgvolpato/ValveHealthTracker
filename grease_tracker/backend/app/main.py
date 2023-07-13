@@ -32,16 +32,6 @@ class Main():
 
         return 0
 
-    def Configure(self):
-        logging.debug("Config setup")
-        
-        self.broker_ip = "127.0.0.1"
-        self.broker_port = 1883
-        self.username = "admin"
-        self.password = "admin123"
-        self.keep_alive = 60
-        self.pubTopic = "test"
-        self.subTopic = "pressure_level"
 
     def Terminate(self):
         logging.debug("Calling Terminate")
@@ -77,10 +67,10 @@ class Main():
         self.mqtt_handler.start()
         
         while(self.privateRun == True):
-            if (self.stopped() == True):
-                logging.debug("Stopping thread AppWorker")
-                self.privateRun = False
-            else:
+            # if (self.stopped() == True):
+            #     logging.debug("Stopping thread AppWorker")
+            #     self.privateRun = False
+            # else:
                 time.sleep(10)
                 logging.debug("Main thread running")
 
@@ -89,9 +79,7 @@ class Main():
 if __name__ == "__main__":
     main = Main()
     main.Initialize()
-    main.Configure()
     main.Execute()
-    main.run()
 
 
 

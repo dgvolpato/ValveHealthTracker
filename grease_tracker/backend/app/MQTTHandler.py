@@ -56,6 +56,7 @@ class MQTTHandler(WorkerThread):
         self.msg_payload = msg.payload
         self.payload_len = len(msg.payload)
         logging.debug("Received message of length " + str(self.payload_len))
+        print("Received payload: " + str(self.msg_payload))
 
     def on_disconnect(self, client, userdata, rc):
         if rc != 0:
