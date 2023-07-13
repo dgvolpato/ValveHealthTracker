@@ -8,21 +8,101 @@ import sys
 def run_mosquitto_pub(topic, value_message, broker_address="localhost"):
     subprocess.run(["resources\\mosquitto_pub.exe", "-m", str(round(value_message,2)), "-t", topic, "-h", broker_address])
 
-def get_grease_level_state(grease_level):
-    if (grease_level <= 0.3):
-        grease_level = 55
-    else:
-        grease_level -= 0.45
-
-    return grease_level
-
-def run_grease_level_simulator():
-    
-    grease_level = 55
+def run_grease_simulator(type):
+    grease_level = 0
+    step = 0
     while True:
+        # print("sent value: ", str(grease_level))
+        print(str(grease_level))
         run_mosquitto_pub(topic="grease_level", value_message=grease_level)
-        grease_level = get_grease_level_state(grease_level)
-        time.sleep(3)
+        if type == "gh":
+            grease_level, step = run_grease_level_simulator_healthy(grease_level, step)
+        elif type == "gum":
+            grease_level, step = run_grease_level_simulator_unhealthy_maintenance_needed(grease_level, step)
+        elif type == "gus":
+            grease_level, step = run_grease_level_simulator_unhealthy_spill(grease_level, step)
+        else:
+            grease_level = 0
+            step = 0
+        time.sleep(0.1)
+
+def run_grease_level_simulator_healthy(grease_level, step):
+    
+    STEP_INCREASE_CONSTANT= 0
+    LIMIT_CONSTANT= 3
+    GREASE_INCREASE_FACTOR = 0.16
+
+    if step < 30:
+        if grease_level + step * STEP_INCREASE_CONSTANT >= LIMIT_CONSTANT :
+            grease_level= 0
+            step += 1
+        else:
+            random_factor = random.randint(-2,9)
+            grease_level += random_factor * GREASE_INCREASE_FACTOR
+    else:
+        step = 0
+
+    return round(grease_level,2), step
+
+def run_grease_level_simulator_unhealthy_maintenance_needed(grease_level, step):
+    
+    
+    LIMIT_CONSTANT= 3
+    GREASE_INCREASE_FACTOR = 0.16
+
+    if step < 30:
+        LIMIT_CONSTANT= 3
+        STEP_INCREASE_CONSTANT= 0.13
+        if grease_level >= LIMIT_CONSTANT + step * STEP_INCREASE_CONSTANT:
+            grease_level= 0
+            step += 1
+        else:
+            random_factor = random.randint(1,9)
+            grease_level += random_factor * GREASE_INCREASE_FACTOR
+    # elif step < 15:
+    #     STEP_INCREASE_CONSTANT= 0.3
+    #     LIMIT_CONSTANT= 3
+    #     if grease_level >= LIMIT_CONSTANT :
+    #         grease_level= 0
+    #         step += 1
+    #     else:
+    #         random_factor = random.randint(-2,9)
+    #         grease_level += random_factor * GREASE_INCREASE_FACTOR
+    else:
+        step = 0
+
+    if grease_level < 0:
+        grease_level = 0
+
+    return round(grease_level,2), step
+
+def run_grease_level_simulator_unhealthy_spill(grease_level, step):
+    
+    STEP_INCREASE_CONSTANT= 0.3
+    LIMIT_CONSTANT= 3
+    GREASE_INCREASE_FACTOR = 0.16
+
+    if step >= 25 and step < 30:
+        if grease_level >= LIMIT_CONSTANT + step * STEP_INCREASE_CONSTANT:
+            grease_level= 0
+            step += 1
+        else:
+            random_factor = random.randint(-2,6)
+            grease_level += random_factor * GREASE_INCREASE_FACTOR
+    elif step < 25:
+        if grease_level >= LIMIT_CONSTANT :
+            grease_level= 0
+            step += 1
+        else:
+            random_factor = random.randint(-2,9)
+            grease_level += random_factor * GREASE_INCREASE_FACTOR
+    else:
+        step = 0
+
+    if grease_level < 0:
+        grease_level = 0
+
+    return round(grease_level,2), step
 
 def get_pressure_level_state(pressure_level, step):
     STEP_DECREASE_CONSTANT= 230
@@ -39,6 +119,9 @@ def get_pressure_level_state(pressure_level, step):
     else:
         step = 0
     
+    if grease_level < 0:
+        grease_level = 0
+
     return pressure_level, step
 
 def run_pressure_simulator():
@@ -68,9 +151,15 @@ if __name__ == "__main__":
 
     try:
         log.info("Welcome to Grease Level Digital Hackathon Simulator")
-        if simulator_type == "g":
-            log.info("selected grease simulator")
-            run_grease_level_simulator()
+        if simulator_type == "gh":
+            log.info("selected grease simulator (healthy)")
+            run_grease_simulator(simulator_type)
+        if simulator_type == "gum":
+            log.info("selected grease simulator (healthy)")
+            run_grease_simulator(simulator_type)
+        if simulator_type == "gus":
+            log.info("selected grease simulator (healthy)")
+            run_grease_simulator(simulator_type)
         elif simulator_type == "p":
             log.info("selected pressure simulator")
             run_pressure_simulator()
