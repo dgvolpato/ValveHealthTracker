@@ -1,5 +1,5 @@
-from WorkerThread import WorkerThread
-from MQTTHandler import MQTTHandler
+from backend.app.WorkerThread import WorkerThread
+from backend.app.MQTTHandler import MQTTHandler
 import time
 import logging
 import json

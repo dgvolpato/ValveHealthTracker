@@ -1,4 +1,4 @@
-from WorkerThread import WorkerThread
+from backend.app.WorkerThread import WorkerThread
 import paho.mqtt.client as mqtt
 import logging
 import time

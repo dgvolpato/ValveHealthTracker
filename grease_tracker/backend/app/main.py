@@ -3,14 +3,14 @@ from tracemalloc import take_snapshot
 from fastapi import FastAPI
 from pydantic import BaseModel
 from datetime import datetime
-from db import PressureReadings
+from backend.app.db import PressureReadings
 from fastapi.middleware.cors import CORSMiddleware
-from MQTTHandler import MQTTHandler
-from WorkerThread import WorkerThread
+from backend.app.MQTTHandler import MQTTHandler
+from backend.app.WorkerThread import WorkerThread
+from backend.app.AppWorker import AppWorker
 import logging
 import json
 import time
-from AppWorker import AppWorker
 
 
 
@@ -73,14 +73,21 @@ app.add_middleware(
 
 @app.get("/pressure")
 async def get_pressure():
-    today_string = "{:%m/%d/%Y}".format(datetime.now())
-    HARDCODED_VALVE_ID = 1
+    # today_string = "{:%m/%d/%Y}".format(datetime.now())
+    # HARDCODED_VALVE_ID = 1
     
-    try:
-        valve_pressure_history = await PressureReadings.objects.filter(valve_id=HARDCODED_VALVE_ID).get()
-    except:
-        valve_pressure_history = None
-    
+    # try:
+    #     valve_pressure_history = await PressureReadings.objects.filter(valve_id=HARDCODED_VALVE_ID).get()
+    # except:
+    #     valve_pressure_history = None
+
+    print("GET pressure request")
+
+    with open("backend/app/sample_pressure_input.json") as input_file:
+        sample_json_file = json.load(input_file)
+        valve_pressure_history = sample_json_file
+    print("response: ", valve_pressure_history)
+
     return valve_pressure_history
 
 
