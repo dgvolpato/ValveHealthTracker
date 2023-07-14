@@ -1,19 +1,18 @@
 
-<mat-card class="example-card">
+<mat-card class="selector-card">
     <mat-card-header>
       <!-- <div mat-card-avatar class="example-header-image"></div> -->
-      <mat-card-title>Select Valves</mat-card-title>
+      <mat-card-title><strong>Select Valves</strong></mat-card-title>
       <mat-card-subtitle>Click on valves for info</mat-card-subtitle>
     </mat-card-header>
     <!-- <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu"> -->
-    <mat-card-content>
-      <div *ngFor="let valve of valvesAvailableForSelection">
-        <div class="valve-button" (click)="selectValve($event)">{{valve}}</div>
+    <mat-card-content class="selection-card">
+      <div class="valve-selector-panel" *ngFor="let valve of valvesAvailableForSelection">
+        <div class="valve-button" [class.selected]="'Valve ' + selectedValve === valve" (click)="selectValve($event)">{{valve}}</div>
       </div>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-button>LIKE</button>
-      <button mat-button>SHARE</button>
+      
     </mat-card-actions>
 </mat-card>
   

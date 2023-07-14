@@ -12,7 +12,6 @@ export class PressureGraphComponent {
 
   selectedOption: number = -1;
   pressureGraph: typeof Highcharts = Highcharts;
-  updateFlag = false;
 
   chartOptions: Highcharts.Options = {};
 
@@ -25,7 +24,6 @@ export class PressureGraphComponent {
 
   loadGraph(): void {
     const pressureData = Object.values(TestData.psiData)[this.selectedOption];
-    console.log(this.selectedOption, pressureData);
     const greasingPressureData = pressureData?.map(
       (res: { timestamp: any; value: number }) => [
         res.timestamp,

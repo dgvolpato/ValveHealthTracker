@@ -8,14 +8,17 @@ import * as TestData from '../../Data/test-data';
 })
 export class ValveSelectorComponent {
   valvesAvailableForSelection: string[] = [];
+  selectedValve: string = '';
   @Output() selectedValveEvent: EventEmitter<string> = new EventEmitter();
 
   ngOnInit(): void {
-    this.valvesAvailableForSelection = Object.keys(TestData.psiData);
+    const valves = Object.keys(TestData.psiData);
+    this.valvesAvailableForSelection = valves.map((name) => 'Valve ' + name);
   }
 
   selectValve(event: Event): void {
     const target = event.target as HTMLElement;
-    this.selectedValveEvent.emit(target.innerText);
+    this.selectedValve = target.innerText.split(' ')[1];
+    this.selectedValveEvent.emit(this.selectedValve);
   }
 }
