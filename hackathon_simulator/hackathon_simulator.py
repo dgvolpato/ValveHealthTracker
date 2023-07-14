@@ -104,7 +104,7 @@ def run_grease_level_simulator_unhealthy_spill(grease_level, step):
 
     return round(grease_level,2), step
 
-def get_pressure_level_state(pressure_level, step):
+def get_pressure_level_state(pressure_level, step):   # DEPRECATED
     STEP_DECREASE_CONSTANT= 230
     LIMIT_CONSTANT= 13000
     PRESSURE_INCREASE_FACTOR = 350
@@ -119,25 +119,104 @@ def get_pressure_level_state(pressure_level, step):
     else:
         step = 0
     
-    if grease_level < 0:
-        grease_level = 0
+    if pressure_level < 0:
+        pressure_level = 0
 
     return pressure_level, step
 
-def run_pressure_simulator():
+
+def run_pressure_level_simulator_healthy(pressure_level, step):   
+    STEP_DECREASE_CONSTANT= 230
+    LIMIT_CONSTANT= 13000
+    PRESSURE_INCREASE_FACTOR = 350
+
+    if step < 60:
+        if pressure_level >= LIMIT_CONSTANT :
+            pressure_level= 0
+            step += 1
+        else:
+            random_factor = random.randint(-3,9)
+            pressure_level += random_factor * PRESSURE_INCREASE_FACTOR
+    else:
+        step = 0
+    
+    if pressure_level < 0:
+        pressure_level = 0
+
+    return pressure_level, step
+
+
+def run_pressure_level_simulator_unhealthy_maintenance_needed(pressure_level, step):   
+    STEP_DECREASE_CONSTANT= 230
+    LIMIT_CONSTANT= 13000
+    PRESSURE_INCREASE_FACTOR = 350
+
+    if step < 60:
+        if pressure_level + step * STEP_DECREASE_CONSTANT >= LIMIT_CONSTANT :
+            pressure_level= 0
+            step += 1
+        else:
+            random_factor = random.randint(-3,9)
+            pressure_level += random_factor * PRESSURE_INCREASE_FACTOR
+    else:
+        step = 0
+    
+    if pressure_level < 0:
+        pressure_level = 0
+
+    return pressure_level, step
+
+
+def run_pressure_level_simulator_unhealthy_spill(pressure_level, step):  
+    STEP_DECREASE_CONSTANT= 300
+    LIMIT_CONSTANT= 13000
+    PRESSURE_INCREASE_FACTOR = 350
+
+    if step < 25:
+        if pressure_level >= LIMIT_CONSTANT :
+            pressure_level= 0
+            step += 1
+        else:
+            random_factor = random.randint(-3,9)
+            pressure_level += random_factor * PRESSURE_INCREASE_FACTOR
+    elif step >= 25:
+        if pressure_level + step * STEP_DECREASE_CONSTANT >= LIMIT_CONSTANT :
+            pressure_level= 0
+            step += 1
+        else:
+            random_factor = random.randint(-3,9)
+            pressure_level += random_factor * PRESSURE_INCREASE_FACTOR
+    else:
+        step = 0
+    
+    if pressure_level < 0:
+        pressure_level = 0
+
+    return pressure_level, step
+
+def run_pressure_simulator(type):
     pressure_level = 0
     step = 0
     while True:
-        print("sent value: ", str(pressure_level))
+        print(str(pressure_level))
         run_mosquitto_pub(topic="pressure_level", value_message=pressure_level)
-        pressure_level, step = get_pressure_level_state(pressure_level, step)
-        time.sleep(0.5)
+        # pressure_level, step = get_pressure_level_state(pressure_level, step)
+        if type == "ph":
+            pressure_level, step = run_pressure_level_simulator_healthy(pressure_level, step)
+        elif type == "pum":
+            pressure_level, step = run_pressure_level_simulator_unhealthy_maintenance_needed(pressure_level, step)
+        elif type == "pus":
+            pressure_level, step = run_pressure_level_simulator_unhealthy_spill(pressure_level, step)
+        else:
+            pressure_level = 0
+            step = 0
+        time.sleep(0.005)
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='hackathon simulator.')
     parser.add_argument('--type', '-t', type=str, 
-                        help='type g from grease or p for pressure')
+                        help='type gh, gum, gus from grease or ph, pum, pus for pressure')
     
     args = parser.parse_args()
     print(args.type)
@@ -150,19 +229,26 @@ if __name__ == "__main__":
     log.setLevel(logging.DEBUG)
 
     try:
+        print("simulator type: ", simulator_type)
         log.info("Welcome to Grease Level Digital Hackathon Simulator")
         if simulator_type == "gh":
             log.info("selected grease simulator (healthy)")
             run_grease_simulator(simulator_type)
         if simulator_type == "gum":
-            log.info("selected grease simulator (healthy)")
+            log.info("selected grease simulator (unhealthy - maintenance needed)")
             run_grease_simulator(simulator_type)
         if simulator_type == "gus":
-            log.info("selected grease simulator (healthy)")
+            log.info("selected grease simulator (healthy - spill)")
             run_grease_simulator(simulator_type)
-        elif simulator_type == "p":
-            log.info("selected pressure simulator")
-            run_pressure_simulator()
+        if simulator_type == "ph":
+            log.info("selected pressure simulator (healthy)")
+            run_pressure_simulator(simulator_type)
+        if simulator_type == "pum":
+            log.info("selected pressure simulator (unhealthy - maintenance needed)")
+            run_pressure_simulator(simulator_type)
+        if simulator_type == "pus":
+            log.info("selected pressure simulator (healthy - spill)")
+            run_pressure_simulator(simulator_type)
         else:
             print("Invalid simulator type")
             print("Exiting program...")
