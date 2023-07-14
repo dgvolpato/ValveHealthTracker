@@ -25,7 +25,7 @@ export class GreaseGraphComponent {
   }
 
   loadGraph(): void {
-    const greaseData = Object.values(TestData.psiData)[this.selectedOption];
+    const greaseData = Object.values(TestData.greaseData)[this.selectedOption];
     const greasingPressureData = greaseData?.map(
       (res: { timestamp: any; value: number }) => [
         res.timestamp,
