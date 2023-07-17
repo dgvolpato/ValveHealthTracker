@@ -1,0 +1,15 @@
+<app-header></app-header>
+<div class="home-page">
+    <div class="valve-selector">
+        <app-valve-selector (selectedValveEvent)="setSelectedValve($event)"></app-valve-selector>
+    </div>
+    <div class="page-content" *ngIf="selectedValve">
+        <div class="greasing-graph" >
+            <app-pressure-graph [pressureData]="selectedValve"></app-pressure-graph>
+            <app-grease-graph [greaseData]="selectedValve"></app-grease-graph>
+        </div>
+        <div class="greasing-capacity-graph">
+            <app-grease-capacity-guage [selectedValve]="selectedValve"></app-grease-capacity-guage>
+        </div>
+    </div>
+</div>
